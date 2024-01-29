@@ -1,6 +1,6 @@
-const defaultTheme = require("tailwindcss/defaultTheme")
-
-module.exports = {
+/** @type {import('tailwindcss').Config} */
+export default {
+  darkMode: "class",
   content: [
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
@@ -99,5 +99,5 @@ module.exports = {
     require("@tailwindcss/forms"),
     // https://github.com/tailwindlabs/tailwindcss-typography
     require("@tailwindcss/typography"),
-  ],
+  ]
 }

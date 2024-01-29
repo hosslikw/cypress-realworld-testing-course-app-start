@@ -1,20 +1,30 @@
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import { visualizer } from 'rollup-plugin-visualizer'
+import url from '@rollup/plugin-url'
 
-module.exports = {
-  swcMinify: true,
-  images: {
-    domains: ["images.unsplash.com", "source.unsplash.com", "tailwindui.com"],
+export default defineConfig({
+  plugins: [
+    vue(),
+    url({
+      limit: 100000,
+      include: [
+        '**/*.svg', '**/*.png', '**/*.jpg', '**/*.gif', '**/*.eot', '**/*.woff', '**/*.woff2', '**/*.ttf'
+      ],
+      fileName: '[name].[ext]'
+    }),
+    visualizer()
+  ],
+  build: {
+    minify: 'esbuild'
   },
-  webpack: function (config) {
-    config.module.rules.push({
-      test: /\.(eot|woff|woff2|ttf|svg|png|jpg|gif)$/,
-      use: {
-        loader: "url-loader",
-        options: {
-          limit: 100000,
-          name: "[name].[ext]",
-        },
-      },
-    })
-    return config
-  },
-}
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
+  }
+})
