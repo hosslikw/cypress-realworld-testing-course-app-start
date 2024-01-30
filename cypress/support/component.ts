@@ -14,13 +14,11 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
-
-// Alternatively you can use CommonJS syntax:
-// require('./commands')
-
-import { mount } from 'cypress/vue'
-
+import './commands';
+import { mount } from 'cypress/vue';
+import { createMemoryHistory, createRouter } from 'vue-router';
+import { routes } from '../../src/router';
+import { getStore } from '../../src/plugins/store';
 // Augment the Cypress namespace to include type definitions for
 // your custom command.
 // Alternatively, can be defined in cypress/support/component.d.ts
@@ -28,12 +26,35 @@ import { mount } from 'cypress/vue'
 declare global {
   namespace Cypress {
     interface Chainable {
-      mount: typeof mount
+      mount: typeof mount;
     }
   }
 }
+Cypress.Commands.add('mount', (component, options = {}) => {
+  // Setup options object
+  options.global = options.global || {};
+  options.global.stubs = options.global.stubs || {};
+  options.global.stubs['transition'] = false;
+  options.global.components = options.global.components || {};
+  options.global.plugins = options.global.plugins || [];
 
-Cypress.Commands.add('mount', mount)
-
+  // create router if one is not provided
+  if (!options.router) {
+    options.router = createRouter({
+      history: createMemoryHistory(),
+      routes: routes,
+    });
+  }
+  // Use store passed in from options, or initialize a new one
+  const store = options.store || getStore();
+  // Add router plugin
+  options.global.plugins.push({
+    install(app) {
+      app.use(options.router);
+      app.use(store);
+    },
+  });
+  return mount(component, options);
+});
 // Example use:
 // cy.mount(MyComponent)
