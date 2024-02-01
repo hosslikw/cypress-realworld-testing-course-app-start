@@ -1,28 +1,29 @@
-import { interpret, State } from "xstate"
-import { progressMachine } from "./progressMachine"
-const LOCAL_STORAGE_ITEM = "progressState"
 
-// @ts-ignore
-const stateDefinition =
-  typeof window !== "undefined"
-    ? JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_ITEM))
-    : undefined
+import { createMachine, assign } from 'xstate';
+import { useMachine } from '@xstate/react';
+import React from 'react';
+import { progressMachine } from "./progressMachine";
 
-let resolvedState
-if (stateDefinition) {
-  const previousState = State.create(stateDefinition)
+const LOCAL_STORAGE_ITEM = "progressState";
 
-  // @ts-ignore
-  resolvedState = progressMachine.resolveState(previousState)
+// Function to attempt to rehydrate state from localStorage
+const rehydrateState = () => {
+  const savedState = localStorage.getItem(LOCAL_STORAGE_ITEM);
+  return savedState ? JSON.parse(savedState) : undefined;
+};
+
+// Custom hook to manage and persist the machine state
+export function usePersistedProgressMachine() {
+  // Use the useMachine hook with the progressMachine. We pass initial state if available.
+  const [state, send, service] = useMachine(progressMachine, {
+    // Initial state from localStorage if available
+    state: rehydrateState()
+  });
+
+  // Effect to store state changes to localStorage
+  React.useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_ITEM, JSON.stringify(state));
+  }, [state]);
+
+  return { state, send, service };
 }
-
-export const progressService = interpret(progressMachine, {
-  devTools: true,
-})
-  .onTransition((state) => {
-    if (state.changed) {
-      typeof window !== "undefined" &&
-        window.localStorage.setItem(LOCAL_STORAGE_ITEM, JSON.stringify(state))
-    }
-  })
-  .start(resolvedState)

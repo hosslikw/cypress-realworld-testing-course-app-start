@@ -1,9 +1,10 @@
 import { createMachine, assign } from "xstate"
+import { ProgressContext } from "common"
 import { concat } from "lodash/fp"
 import { getCourse, getChallenge, isSectionCompleted } from "../utils/machineUtils"
 import coursesJson from "../data/courses.json"
 
-const defaultContext = {
+const defaultContext: ProgressContext = {
 	sectionsCompleted: [],
 	lessons: [],
 	disableChallenges: false
@@ -36,13 +37,13 @@ export const progressMachine = createMachine(
 	},
 	{
 		actions: {
-			saveProgress: assign((context, event) => ({
+			saveProgress: assign((context: any, event: any) => ({
 				lessons: concat(context.lessons, {
 					id: event.id,
 					status: "completed"
 				})
 			})),
-			validateAndLogAnswer: assign((context, event) => {
+			validateAndLogAnswer: assign((context: any, event: any) => {
 				const challenge = getChallenge(coursesJson, event.id, event.challengeIndex)
 
 				const isCorrectMultipleChoiceAnswer = challenge.challengeType === "multiple-choice" && challenge.correctAnswerIndex === event.userAnswerIndex
@@ -56,10 +57,11 @@ export const progressMachine = createMachine(
 					}
 				}
 			}),
-			disableChallenges: assign((context, event) => ({
+			disableChallenges: assign((context: any, event: any) => ({
 				disableChallenges: event.value
 			})),
-			isSectionCompleted: assign((context, event) => {
+
+			isSectionCompleted: assign((context: any, event: any) => {
 				const [sectionSlug] = event.id.split("/")
 				const course = getCourse(coursesJson, event.id)
 				const completedLessons = context.lessons.filter((lesson) => lesson.status === "completed")
@@ -70,7 +72,6 @@ export const progressMachine = createMachine(
 					}
 				}
 			})
-		},
-		predictableActionArguments: true // This should be included in the machine options object
+		}
 	}
 )
