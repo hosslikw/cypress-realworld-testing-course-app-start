@@ -55,10 +55,12 @@ export default function CourseProgress({ lessons, progressService, course }) {
               {/* Lesson Title */}
               <span className="ml-4 min-w-0 flex flex-col">
                 <span className="text-xs font-semibold tracking-wide uppercase">
-                  <Link href={`/${course}/${lesson.slug}`}>
-                    <a data-test={`lesson-progress-link-${index}`}>
-                      {lesson.title}
-                    </a>
+                  <Link
+                    href={`/${course}/${lesson.slug}`}
+                    data-test={`lesson-progress-link-${index}`}>
+
+                    {lesson.title}
+
                   </Link>
                 </span>
               </span>
@@ -67,5 +69,5 @@ export default function CourseProgress({ lessons, progressService, course }) {
         ))}
       </ol>
     </nav>
-  )
+  );
 }

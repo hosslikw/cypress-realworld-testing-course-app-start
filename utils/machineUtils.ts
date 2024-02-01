@@ -32,15 +32,11 @@ export const getCourse = (coursesJson: object, lessonPath: string) => {
   return coursesJson[sectionSlug]
 }
 
-export const isLessonCompleted = (progressService, lessonPath) => {
-  return gte(
-    findIndex(
-      { id: lessonPath, status: "completed" },
-      progressService.state.context.lessons
-    ),
-    0
-  )
-}
+// Assumes `lessons` is an array of lesson objects with `id` and `status`
+export const isLessonCompleted = (lessons, lessonPath) => {
+  const lesson = lessons.find(lesson => lesson.id === lessonPath);
+  return lesson?.status === "completed";
+};
 
 export const isSectionCompleted = (sectionsCompleted, sectionSlug) => {
   return sectionsCompleted.includes(sectionSlug)

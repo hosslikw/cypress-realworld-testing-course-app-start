@@ -14,7 +14,7 @@ export default function MobileProgressMenu({
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex justify-between items-center border-b-2 border-gray-100 py-6 md:justify-start md:space-x-10">
           <div className="flex justify-start lg:w-0 lg:flex-1">
-            <Link href="/">
+            <Link href="/" legacyBehavior>
               <img
                 className="h-8 w-auto sm:h-10"
                 src="https://tailwindui.com/img/logos/workflow-mark-blue-600.svg"
@@ -91,10 +91,12 @@ export default function MobileProgressMenu({
               </div>
               <div className="relative bg-white pt-16 overflow-hidden">
                 <div className="max-w-lg mx-auto">
-                  <Link href="/real-world-examples">
-                    <a className="w-full bg-blue-600 border border-transparent rounded-md py-2 px-4 flex items-center justify-center text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                  <Link
+                    href="/real-world-examples"
+                    className="w-full bg-blue-600 border border-transparent rounded-md py-2 px-4 flex items-center justify-center text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    
                       Real World Examples
-                    </a>
+                    
                   </Link>
                 </div>
               </div>
@@ -103,5 +105,5 @@ export default function MobileProgressMenu({
         </Popover.Panel>
       </Transition>
     </Popover>
-  )
+  );
 }
